@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
+using Microsoft.Extensions.Configuration;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace SiteAvailabilityProcessor
 {
@@ -8,26 +10,37 @@ namespace SiteAvailabilityProcessor
     {
         public static void Main(string[] args)
         {
-            //setup our DI
-            var serviceProvider = new ServiceCollection()
-                .AddLogging()
-                .AddSingleton<IRabbitMqListner, RabbitMqListner>()
-                .BuildServiceProvider();
+            // create service collection
+            var services = ConfigureServices();
 
-            //configure console logging
-            serviceProvider
-                .GetService<ILoggerFactory>();
+            var serviceProvider = services.BuildServiceProvider();
 
-            var logger = serviceProvider.GetService<ILoggerFactory>()
-                .CreateLogger<Program>();
-            logger.LogDebug("Starting application");
+            // calls the Run method in App, which is replacing Main
+            serviceProvider.GetService<App>().Run();
 
-            //do the actual work here
-            var bar = serviceProvider.GetService<IRabbitMqListner>();
-            bar.MessageQueueListner();
+        }
 
-            logger.LogDebug("All done!");
+        private static IServiceCollection ConfigureServices()
+        {
+            IServiceCollection services = new ServiceCollection();
 
+            var config = LoadConfiguration();
+            services.AddSingleton(config);
+
+            services.AddTransient<IRabbitMqListner, RabbitMqListner>();
+            // required to run the application
+            services.AddTransient<App>();
+
+            return services;
+        }
+
+        public static IConfiguration LoadConfiguration()
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+
+            return builder.Build();
         }
     }
 }
