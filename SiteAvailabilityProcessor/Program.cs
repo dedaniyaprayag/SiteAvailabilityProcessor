@@ -11,7 +11,7 @@ namespace SiteAvailabilityProcessor
 {
     class Program
     {
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
             // create service collection
             var services = ConfigureServices();
@@ -19,7 +19,7 @@ namespace SiteAvailabilityProcessor
             var serviceProvider = services.BuildServiceProvider();
 
             // calls the Run method in App, which is replacing Main
-            await serviceProvider.GetService<App>().RunAsync();
+            serviceProvider.GetService<App>().RunAsync();
 
             Console.ReadLine();
 

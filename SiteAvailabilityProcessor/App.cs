@@ -9,9 +9,9 @@ namespace SiteAvailabilityProcessor
         {
             _rabbitMqListner = rabbitMqListner;
         }
-        public async Task RunAsync()
+        public void RunAsync()
         {
-            await _rabbitMqListner.MessageQueueListner();
+            _rabbitMqListner.MessageQueueListner();
         }
     }
 }

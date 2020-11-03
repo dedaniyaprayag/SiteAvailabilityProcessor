@@ -4,6 +4,6 @@ namespace SiteAvailabilityProcessor
 {
     public interface IRabbitMqListner
     {
-        Task MessageQueueListner();
+        void MessageQueueListner();
     }
 }

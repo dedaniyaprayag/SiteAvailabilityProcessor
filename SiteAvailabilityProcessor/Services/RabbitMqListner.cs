@@ -52,7 +52,7 @@ namespace SiteAvailabilityProcessor
         /// Message Queue Listner
         /// </summary>
         /// <returns></returns>
-        public Task MessageQueueListner()
+        public void MessageQueueListner()
         {
             var consumer = new EventingBasicConsumer(_channel);
             consumer.Received += (ch, ea) =>
@@ -65,8 +65,6 @@ namespace SiteAvailabilityProcessor
                 _channel.BasicAck(ea.DeliveryTag, true);
             };
             _channel.BasicConsume(_rabbitMqConfiguration.QueueName, true, consumer);
-
-            return Task.CompletedTask;
         }
     }
 }
