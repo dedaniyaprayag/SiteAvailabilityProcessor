@@ -17,8 +17,8 @@ namespace SiteAvailabilityProcessor.Provider
         {
             using var conn = new NpgsqlConnection(_postgreConfiguration.ConnectionString);
             conn.Open();
-            string sql = @"INSERT INTO sitehistory (userid,site,status)
-                                VALUES (@UserId,@Site,@Status)";
+            string sql = @"INSERT INTO sitehistoricaldata (userid,site,status,timestamp)
+                                VALUES (@UserId,@Site,@Status,@Timestamp)";
             return Convert.ToBoolean(await conn.ExecuteAsync(sql, site));
         }
     }

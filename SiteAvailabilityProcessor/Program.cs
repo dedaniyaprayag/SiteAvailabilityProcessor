@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using SiteAvailabilityProcessor.Config;
 using System;
 using SiteAvailabilityProcessor.Infrastructure;
+using SiteAvailabilityProcessor.Provider;
 
 namespace SiteAvailabilityProcessor
 {
@@ -33,8 +34,10 @@ namespace SiteAvailabilityProcessor
             services.AddTransient<IRabbitMqListner, RabbitMqListner>();
             services.AddSingleton<IRabbitMqConnection, RabbitMqConnection>();
             services.AddSingleton<IRabbitMqConfiguration>(config.GetSection("RabbitMq").Get<RabbitMqConfiguration>());
+            services.AddSingleton<IPostgreSqlConfiguration>(config.GetSection("PostgreSql").Get<PostgreSqlConfiguration>());
             services.AddTransient<App>();
-
+            services.AddHttpClient<ISiteAvailablityProvider, SiteAvailablityProvider>();
+            services.AddTransient<IDbProvider, PostgresSqlProvider>();
             return services;
         }
 

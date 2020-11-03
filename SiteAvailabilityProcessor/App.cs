@@ -1,18 +1,15 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
+﻿using System.Threading.Tasks;
 
 namespace SiteAvailabilityProcessor
 {
     public class App
     {
-        private readonly IConfiguration _config;
         private readonly IRabbitMqListner _rabbitMqListner;
-        public App(IConfiguration config, IRabbitMqListner rabbitMqListner)
+        public App(IRabbitMqListner rabbitMqListner)
         {
-            _config = config;
             _rabbitMqListner = rabbitMqListner;
         }
-        public async System.Threading.Tasks.Task RunAsync()
+        public async Task RunAsync()
         {
             await _rabbitMqListner.MessageQueueListner();
         }

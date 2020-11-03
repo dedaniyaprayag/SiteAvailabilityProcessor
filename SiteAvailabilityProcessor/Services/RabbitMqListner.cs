@@ -16,11 +16,15 @@ namespace SiteAvailabilityProcessor
         private readonly IRabbitMqConfiguration _rabbitMqConfiguration;
         private readonly IRabbitMqConnection _rabbitMqConnection;
         private readonly IDbProvider _dbProvider;
+        private readonly ISiteAvailablityProvider _siteAvailablityProvider;
         private IModel _channel;
-        public RabbitMqListner(IRabbitMqConnection rabbitMqConnection, IRabbitMqConfiguration rabbitMqConfiguration)
+        public RabbitMqListner(IRabbitMqConnection rabbitMqConnection, IRabbitMqConfiguration rabbitMqConfiguration, 
+            IDbProvider dbProvider,ISiteAvailablityProvider siteAvailablityProvider)
         {
             _rabbitMqConfiguration = rabbitMqConfiguration;
             _rabbitMqConnection = rabbitMqConnection;
+            _dbProvider = dbProvider;
+            _siteAvailablityProvider = siteAvailablityProvider;
             InitializeRabbitMqListener();
         }
 
@@ -32,18 +36,20 @@ namespace SiteAvailabilityProcessor
 
         private async Task HandleMessageAsync(SiteDto siteModel)
         {
-           await _dbProvider.InsertAsync(siteModel);
+            var status = await _siteAvailablityProvider.CheckSiteAvailablityAsync(siteModel);
+            siteModel.Status = status;
+            await _dbProvider.InsertAsync(siteModel);
         }
 
         public Task MessageQueueListner()
         {
             var consumer = new EventingBasicConsumer(_channel);
-            consumer.Received += (ch, ea) =>
+            consumer.Received += async (ch, ea) =>
             {
                 var content = Encoding.UTF8.GetString(ea.Body.ToArray());
                 var siteModel = JsonConvert.DeserializeObject<SiteDto>(content);
 
-                HandleMessageAsync(siteModel);
+                await HandleMessageAsync(siteModel);
 
                 _channel.BasicAck(ea.DeliveryTag, true);
             };

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace SiteAvailabilityProcessor.Models
 {
@@ -8,6 +6,8 @@ namespace SiteAvailabilityProcessor.Models
     {
         public string UserId { get; set; }
         public string Site { get; set; }
-        public int Status { get; set; }
+        public bool Status { get; set; }
+        public DateTime Timestamp { get; set; } = DateTime.Now;
+
     }
 }
