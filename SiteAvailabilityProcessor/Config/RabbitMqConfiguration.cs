@@ -1,5 +1,8 @@
 ﻿namespace SiteAvailabilityProcessor.Config
 {
+    /// <summary>
+    /// RabbitMqConfiguration class
+    /// </summary>
     public class RabbitMqConfiguration : IRabbitMqConfiguration
     {
         public string Hostname { get; set; }

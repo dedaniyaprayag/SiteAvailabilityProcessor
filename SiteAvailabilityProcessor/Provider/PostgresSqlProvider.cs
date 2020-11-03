@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace SiteAvailabilityProcessor.Provider
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class PostgresSqlProvider : IDbProvider
     {
         private readonly IPostgreSqlConfiguration _postgreConfiguration;
@@ -13,6 +16,12 @@ namespace SiteAvailabilityProcessor.Provider
         {
             _postgreConfiguration = postgreConfiguration;
         }
+
+        /// <summary>
+        /// Insert SiteModel to Postgres sql
+        /// </summary>
+        /// <param name="site"></param>
+        /// <returns></returns>
         public async Task<bool> InsertAsync(SiteDto site)
         {
             using var conn = new NpgsqlConnection(_postgreConfiguration.ConnectionString);

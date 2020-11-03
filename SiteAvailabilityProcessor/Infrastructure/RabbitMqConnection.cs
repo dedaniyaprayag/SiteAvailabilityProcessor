@@ -3,6 +3,9 @@ using SiteAvailabilityProcessor.Config;
 
 namespace SiteAvailabilityProcessor.Infrastructure
 {
+    /// <summary>
+    /// RabbitMqConnector Class
+    /// </summary>
     public class RabbitMqConnection : IRabbitMqConnection
     {
         private readonly IConnection connection;
