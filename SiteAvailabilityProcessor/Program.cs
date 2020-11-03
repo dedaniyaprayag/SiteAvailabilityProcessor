@@ -1,14 +1,16 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using System.IO;
 using System.Threading.Tasks;
+using SiteAvailabilityProcessor.Config;
+using System;
+using SiteAvailabilityProcessor.Infrastructure;
 
 namespace SiteAvailabilityProcessor
 {
     class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             // create service collection
             var services = ConfigureServices();
@@ -16,7 +18,9 @@ namespace SiteAvailabilityProcessor
             var serviceProvider = services.BuildServiceProvider();
 
             // calls the Run method in App, which is replacing Main
-            serviceProvider.GetService<App>().Run();
+            await serviceProvider.GetService<App>().RunAsync();
+
+            Console.ReadLine();
 
         }
 
@@ -26,9 +30,9 @@ namespace SiteAvailabilityProcessor
 
             var config = LoadConfiguration();
             services.AddSingleton(config);
-
             services.AddTransient<IRabbitMqListner, RabbitMqListner>();
-            // required to run the application
+            services.AddSingleton<IRabbitMqConnection, RabbitMqConnection>();
+            services.AddSingleton<IRabbitMqConfiguration>(config.GetSection("RabbitMq").Get<RabbitMqConfiguration>());
             services.AddTransient<App>();
 
             return services;

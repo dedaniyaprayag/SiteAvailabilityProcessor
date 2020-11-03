@@ -7,14 +7,14 @@ namespace SiteAvailabilityProcessor
     {
         private readonly IConfiguration _config;
         private readonly IRabbitMqListner _rabbitMqListner;
-        public App(IConfiguration config,IRabbitMqListner rabbitMqListner)
+        public App(IConfiguration config, IRabbitMqListner rabbitMqListner)
         {
             _config = config;
             _rabbitMqListner = rabbitMqListner;
         }
-        public void Run()
+        public async System.Threading.Tasks.Task RunAsync()
         {
-            _rabbitMqListner.MessageQueueListner();
+            await _rabbitMqListner.MessageQueueListner();
         }
     }
 }
