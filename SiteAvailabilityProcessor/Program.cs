@@ -31,6 +31,7 @@ namespace SiteAvailabilityProcessor
 
             var config = LoadConfiguration();
             services.AddSingleton(config);
+            services.AddApplicationInsightsTelemetry();
             services.AddTransient<IRabbitMqListner, RabbitMqListner>();
             services.AddSingleton<IRabbitMqConnection, RabbitMqConnection>();
             services.AddSingleton<IRabbitMqConfiguration>(config.GetSection("RabbitMq").Get<RabbitMqConfiguration>());
