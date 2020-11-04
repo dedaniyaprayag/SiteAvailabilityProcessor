@@ -20,8 +20,8 @@ namespace SiteAvailabilityProcessor
         private readonly IDbProvider _dbProvider;
         private readonly ISiteAvailablityProvider _siteAvailablityProvider;
         private IModel _channel;
-        public RabbitMqListner(IRabbitMqConnection rabbitMqConnection, IRabbitMqConfiguration rabbitMqConfiguration, 
-            IDbProvider dbProvider,ISiteAvailablityProvider siteAvailablityProvider)
+        public RabbitMqListner(IRabbitMqConnection rabbitMqConnection, IRabbitMqConfiguration rabbitMqConfiguration,
+            IDbProvider dbProvider, ISiteAvailablityProvider siteAvailablityProvider)
         {
             _rabbitMqConfiguration = rabbitMqConfiguration;
             _rabbitMqConnection = rabbitMqConnection;
@@ -52,19 +52,18 @@ namespace SiteAvailabilityProcessor
         /// Message Queue Listner
         /// </summary>
         /// <returns></returns>
-        public void MessageQueueListner()
+        public Task MessageQueueListner()
         {
-            var consumer = new EventingBasicConsumer(_channel);
-            consumer.Received += (ch, ea) =>
+            var consumer = new AsyncEventingBasicConsumer(_channel);
+            _channel.BasicConsume(_rabbitMqConfiguration.QueueName, true, consumer);
+            consumer.Received += async (o, a) =>
             {
-                var content = Encoding.UTF8.GetString(ea.Body.ToArray());
+                var content = Encoding.UTF8.GetString(a.Body.ToArray());
                 var siteModel = JsonConvert.DeserializeObject<SiteDto>(content);
 
-                HandleMessageAsync(siteModel);
-
-                _channel.BasicAck(ea.DeliveryTag, true);
+                await HandleMessageAsync(siteModel);
             };
-            _channel.BasicConsume(_rabbitMqConfiguration.QueueName, true, consumer);
-        }
+            return Task.CompletedTask;
+        }       
     }
 }

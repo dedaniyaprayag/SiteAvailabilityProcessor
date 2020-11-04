@@ -14,6 +14,7 @@ namespace SiteAvailabilityProcessor.Infrastructure
         {
             var connectionFactory = new ConnectionFactory
             {
+                DispatchConsumersAsync = true,                
                 HostName = rabbitMqConfiguration.Hostname,
                 Port = rabbitMqConfiguration.Port,
                 UserName = rabbitMqConfiguration.UserName,
