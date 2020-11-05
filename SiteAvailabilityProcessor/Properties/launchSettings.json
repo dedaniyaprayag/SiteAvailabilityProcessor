@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "SiteAvailabilityProcessor": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
