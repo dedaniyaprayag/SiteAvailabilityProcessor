@@ -16,7 +16,7 @@ This Console application is continuoisly listning to RabbitMq Message Queue for 
 On receiving Message,
 
 1. Checking whether the given input site is up or not.
-2. Inserting this status history for that user in Postgresql, which will be used to fetch the historical data for the user.
+2. Insert the site availability results into postgresql which will be used to display on UI.
 
 # Deployement
 This API is deployed as WebJobs in Azure.
@@ -33,6 +33,6 @@ AppInsights
 ![Optional Text](Images/SiteAvailablityTelemetry.png)
 
 
-# SiteAvailabilityApi.Tests
+# SiteAvailabilityProcessor.Tests
 
 Added Unit Tests for SiteAvailabilityProcessor API
