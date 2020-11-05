@@ -5,6 +5,6 @@ namespace SiteAvailabilityProcessor.Provider
 {
     public interface ISiteAvailablityProvider
     {
-        Task<bool> CheckSiteAvailablityAsync(SiteDto siteModel);
+        bool CheckSiteAvailablity(SiteDto siteModel);
     }
 }

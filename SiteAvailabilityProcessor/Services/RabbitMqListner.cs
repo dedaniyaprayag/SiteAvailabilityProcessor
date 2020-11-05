@@ -43,7 +43,7 @@ namespace SiteAvailabilityProcessor
         /// <returns></returns>
         private async Task HandleMessageAsync(SiteDto siteModel)
         {
-            var status = await _siteAvailablityProvider.CheckSiteAvailablityAsync(siteModel);
+            var status = _siteAvailablityProvider.CheckSiteAvailablity(siteModel);
             siteModel.Status = status;
             await _dbProvider.InsertAsync(siteModel);
         }
@@ -64,6 +64,6 @@ namespace SiteAvailabilityProcessor
                 await HandleMessageAsync(siteModel);
             };
             return Task.CompletedTask;
-        }       
+        }
     }
 }

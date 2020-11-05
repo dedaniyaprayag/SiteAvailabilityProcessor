@@ -6,6 +6,7 @@ using SiteAvailabilityProcessor.Config;
 using System;
 using SiteAvailabilityProcessor.Infrastructure;
 using SiteAvailabilityProcessor.Provider;
+using System.Net.Http;
 
 namespace SiteAvailabilityProcessor
 {
@@ -31,7 +32,7 @@ namespace SiteAvailabilityProcessor
 
             var config = LoadConfiguration();
             services.AddSingleton(config);
-            services.AddApplicationInsightsTelemetry();
+          //  services.AddApplicationInsightsTelemetry();
             services.AddTransient<IRabbitMqListner, RabbitMqListner>();
             services.AddSingleton<IRabbitMqConnection, RabbitMqConnection>();
             services.AddSingleton<IRabbitMqConfiguration>(config.GetSection("RabbitMq").Get<RabbitMqConfiguration>());
