@@ -33,6 +33,6 @@ AppInsights
 ![Optional Text](Images/SiteAvailablityTelemetry.png)
 
 
-# SiteAvailabilityApi.Tests
+# SiteAvailabilityProcessor.Tests
 
 Added Unit Tests for SiteAvailabilityProcessor API
