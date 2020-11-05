@@ -7,6 +7,8 @@ using System;
 using SiteAvailabilityProcessor.Infrastructure;
 using SiteAvailabilityProcessor.Provider;
 using System.Net.Http;
+using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.Extensibility;
 
 namespace SiteAvailabilityProcessor
 {
@@ -16,11 +18,13 @@ namespace SiteAvailabilityProcessor
         {
             // create service collection
             var services = ConfigureServices();
-
+            TelemetryConfiguration configuration = TelemetryConfiguration.CreateDefault();
+            configuration.InstrumentationKey = "46713698-7ca1-46bf-9b00-e7e11da851a2";
+            var _client = new TelemetryClient(configuration);
             var serviceProvider = services.BuildServiceProvider();
 
             // calls the Run method in App, which is replacing Main
-            await serviceProvider.GetService<App>().RunAsync();
+            await serviceProvider.GetService<App>().RunAsync(_client);
 
             Console.ReadLine();
 
@@ -32,7 +36,6 @@ namespace SiteAvailabilityProcessor
 
             var config = LoadConfiguration();
             services.AddSingleton(config);
-          //  services.AddApplicationInsightsTelemetry();
             services.AddTransient<IRabbitMqListner, RabbitMqListner>();
             services.AddSingleton<IRabbitMqConnection, RabbitMqConnection>();
             services.AddSingleton<IRabbitMqConfiguration>(config.GetSection("RabbitMq").Get<RabbitMqConfiguration>());

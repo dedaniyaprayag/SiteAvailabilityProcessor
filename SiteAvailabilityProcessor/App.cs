@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using Microsoft.ApplicationInsights;
+using System.Threading.Tasks;
 
 namespace SiteAvailabilityProcessor
 {
@@ -9,9 +10,9 @@ namespace SiteAvailabilityProcessor
         {
             _rabbitMqListner = rabbitMqListner;
         }
-        public async Task RunAsync()
+        public async Task RunAsync(TelemetryClient client)
         {
-            await _rabbitMqListner.MessageQueueListner();
+            await _rabbitMqListner.MessageQueueListner(client);
         }
     }
 }

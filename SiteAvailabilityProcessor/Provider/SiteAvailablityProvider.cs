@@ -1,28 +1,30 @@
-﻿using SiteAvailabilityProcessor.Models;
+﻿using Microsoft.ApplicationInsights;
+using SiteAvailabilityProcessor.Models;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Threading.Tasks;
 
 namespace SiteAvailabilityProcessor.Provider
 {
     public class SiteAvailablityProvider : ISiteAvailablityProvider
     {
         private readonly HttpClient _httpClient;
+
         public SiteAvailablityProvider(HttpClient httpClient)
         {
             _httpClient = httpClient;
         }
-        public bool CheckSiteAvailablity(SiteDto siteModel)
+        public bool CheckSiteAvailablity(SiteDto siteModel, TelemetryClient client)
         {
             siteModel.Site = siteModel.Site.Replace("https://", "").Replace("http://", "");
             siteModel.Site = "http://" + siteModel.Site;
-            return PingHost(new Uri(siteModel.Site)) == "Ok";
+            return PingHost(new Uri(siteModel.Site), client) == "Ok";
         }
 
-        public static string PingHost(Uri uri)
+        public string PingHost(Uri uri, TelemetryClient client)
         {
             string returnMessage = string.Empty;
             IPAddress address = Dns.GetHostAddresses(uri.Host)[0];
@@ -30,7 +32,7 @@ namespace SiteAvailabilityProcessor.Provider
 
             Ping ping = new Ping();
             byte[] buffer = new byte[32];
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 4; i++)
             {
                 try
                 {
@@ -63,6 +65,17 @@ namespace SiteAvailabilityProcessor.Provider
                     returnMessage = string.Format("Connection Error: {0}", ex.Message);
                 }
             }
+            var dict = new Dictionary<string, string>()
+            {
+                { "site",uri.Host },
+                {"AbsoluteUri", uri.AbsoluteUri},
+                {"AbsolutePath", uri.AbsolutePath},
+                {
+                    "message", returnMessage
+                }
+
+            };
+            client.TrackEvent("siteEvents", dict);
             return returnMessage;
         }
     }

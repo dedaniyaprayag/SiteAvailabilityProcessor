@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.ApplicationInsights;
+using Microsoft.ApplicationInsights.DataContracts;
+using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using SiteAvailabilityProcessor.Config;
@@ -41,9 +43,10 @@ namespace SiteAvailabilityProcessor
         /// </summary>
         /// <param name="siteModel">Model class for Site</param>
         /// <returns></returns>
-        private async Task HandleMessageAsync(SiteDto siteModel)
+        private async Task HandleMessageAsync(SiteDto siteModel,TelemetryClient client)
         {
-            var status = _siteAvailablityProvider.CheckSiteAvailablity(siteModel);
+            var status = _siteAvailablityProvider.CheckSiteAvailablity(siteModel,client);
+            client.TrackTrace($"{status}", SeverityLevel.Information);
             siteModel.Status = status;
             await _dbProvider.InsertAsync(siteModel);
         }
@@ -52,7 +55,7 @@ namespace SiteAvailabilityProcessor
         /// Message Queue Listner
         /// </summary>
         /// <returns></returns>
-        public Task MessageQueueListner()
+        public Task MessageQueueListner(TelemetryClient client)
         {
             var consumer = new AsyncEventingBasicConsumer(_channel);
             _channel.BasicConsume(_rabbitMqConfiguration.QueueName, true, consumer);
@@ -61,7 +64,7 @@ namespace SiteAvailabilityProcessor
                 var content = Encoding.UTF8.GetString(a.Body.ToArray());
                 var siteModel = JsonConvert.DeserializeObject<SiteDto>(content);
 
-                await HandleMessageAsync(siteModel);
+                await HandleMessageAsync(siteModel,client);
             };
             return Task.CompletedTask;
         }
